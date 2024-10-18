@@ -1,9 +1,12 @@
-﻿using System;
+﻿using BLL;
+using DTO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -24,10 +27,12 @@ namespace GUI
         private Point posThongTinPanel = new Point(3, 265);
         private Point posThemNhanVienPanel = new Point(730, 0);
         private int CongViecOrCaNhan = 1;
+        List<NhanVienDTO> listNhanVien;
+        private NhanVienBLL _nhanVienBLL;
         public fNhanVien(string idLogin)
         {
             InitializeComponent();
-
+            _nhanVienBLL = new NhanVienBLL();
             panelThongTinCongViec.Location = posThongTinPanel;
             panelThongTinCaNhan.Location = posThongTinPanel;
             panelThongTinCaNhan.Visible = false;
@@ -43,12 +48,26 @@ namespace GUI
             SetupDataGridView();
             this.idLogin = idLogin;
 
+            LoadDataNhanVien();
+
             dtpNgayBatDau.ValueChanged += (s, ev) =>
             {
                 txtNgayBatDau.Text = dtpNgayBatDau.Value.ToString("dddd, dd/MM/yyyy");
             };
         }
+        private void LoadDataNhanVien()
+        {
+            // Lấy danh sách nhân viên từ BLL
+            listNhanVien = _nhanVienBLL.LayDSNhanVien();
 
+            foreach(var item in listNhanVien)
+            {
+                dgvNhanVien.Rows.Add(item.TenNhanVien, item.NgayBatDau, item.LuongCoBan);
+            }
+
+            // Gán danh sách vào DataGridView
+            //dgvNhanVien.DataSource = listNhanVien;
+        }
         private void ImportAvatar()
         {
             avatars[0] = Properties.Resources.Avatar;
@@ -88,7 +107,7 @@ namespace GUI
             dgvNhanVien.RowTemplate.Height = 60;
             dgvNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvNhanVien.ColumnHeadersHeight = 60;
-
+            /*
             dgvNhanVien.Rows.Add("Arlene McCoy\nWorker", "Mar 1, 2022\nJoined from 235 days", "$1,546\n1 Jun 2022");
             dgvNhanVien.Rows.Add("John Doe\nManager", "Feb 15, 2021\nJoined from 600 days", "$2,345\n5 Mar 2022");
             dgvNhanVien.Rows.Add("Jane Smith\nEngineer", "Jul 10, 2020\nJoined from 800 days", "$3,250\n12 Dec 2021");
@@ -109,7 +128,7 @@ namespace GUI
             dgvNhanVien.Rows.Add("Ella Murphy\nReceptionist", "Oct 3, 2021\nJoined from 365 days", "$1,300\n20 Oct 2021");
             dgvNhanVien.Rows.Add("Henry Rodriguez\nTeacher", "Feb 25, 2021\nJoined from 600 days", "$2,450\n5 Mar 2021");
             dgvNhanVien.Rows.Add("Ava Bennett\nLawyer", "Apr 18, 2020\nJoined from 820 days", "$3,750\n22 Apr 2020");
-
+            */
 
             dgvBXH.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal;
             dgvBXH.GridColor = SystemColors.Window;
@@ -200,35 +219,35 @@ namespace GUI
 
                     string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["TenNV"].Value).Split('\n');
                     string p1 = parts[0];
-                    string p2 = parts[1];
+                    //string p2 = parts[1];
 
 
                     e.Graphics.DrawString(p1, font, Brushes.Black, rect.X + 50, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X + 50, rect.Y + 25);
+                    //e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X + 50, rect.Y + 25);
                 }
                 else if (e.ColumnIndex == dgvNhanVien.Columns["NgayBatDau"].Index &&
                     dgvNhanVien.Rows[e.RowIndex].Cells["NgayBatDau"].Value != null)
                 {
                     Rectangle rect = e.CellBounds;
 
-                    string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["NgayBatDau"].Value).Split('\n');
-                    string p1 = parts[0];
-                    string p2 = parts[1];
+                    //string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["NgayBatDau"].Value).Split('\n');
+                    //string p1 = parts[0];
+                    //string p2 = parts[1];
 
-                    e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
+                    //e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
+                    //e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
                 }
                 else if (e.ColumnIndex == dgvNhanVien.Columns["Luong"].Index &&
                     dgvNhanVien.Rows[e.RowIndex].Cells["Luong"].Value != null)
                 {
                     Rectangle rect = e.CellBounds;
 
-                    string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["Luong"].Value).Split('\n');
-                    string p1 = parts[0];
-                    string p2 = parts[1];
+                    //string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["Luong"].Value).Split('\n');
+                    //string p1 = parts[0];
+                    //string p2 = parts[1];
 
-                    e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
+                    //e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
+                    //e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
                 }
             }
         }
@@ -297,6 +316,103 @@ namespace GUI
 
         private void btnThem_Click(object sender, EventArgs e)
         {
+
+           
+            // Kiểm tra dữ liệu đầu vào
+           /* if (txtHoTen.Text == "") { lbWarningHoTen.Visible = true; return; }
+            if (txtNgaySinh.Text == "") { lbWarningNgaySinh.Visible = true; return; }
+            if (txtDiaChi.Text == "") { lbWarningDiaChi.Visible = true; return; }
+            if (txtSoDienThoai.Text == "") { lbWarningSDT.Visible = true; return; }
+            if (txtChucVu.Text == "") { lbWarningChucVu.Visible = true; return; }
+            if (txtNgayBatDau.Text == "") { lbWarningNgayBD.Visible = true; return; }
+            if (txtLuongCoBan.Text == "") { lbWarningLuong.Visible = true; return; }
+           */
+
+            // Thu thập dữ liệu từ các trường nhập liệu
+            string hoTen = txtHoTen.Text;
+            string ngaySinh = txtNgaySinh.Text;
+            string diaChi = txtDiaChi.Text;
+            string soDienThoai = txtSoDienThoai.Text;
+            string chucVu = txtChucVu.Text;
+            string ngayBatDau = txtNgayBatDau.Text;
+            string luongCBStr = txtLuongCoBan.Text;
+
+            decimal luongCoBan;
+
+            // Kiểm tra và chuyển đổi lương cơ bản
+            if (!decimal.TryParse(luongCBStr, out luongCoBan) || luongCoBan < 0)
+            {
+                //lbWarningLuongCB.Visible = true;
+                txtLuongCoBan.Clear();
+                txtLuongCoBan.Focus();
+                return;
+            }
+
+            // Kiểm tra định dạng ngày sinh và ngày bắt đầu
+            DateTime ngaySinhDt;
+            if (!DateTime.TryParse(ngaySinh, out ngaySinhDt))
+            {
+                //lbWarningNgaySinh1.Visible = true;
+                txtNgaySinh.Clear();
+                txtNgaySinh.Focus();
+                return;
+            }
+
+            DateTime ngayBatDauDt;
+            if (!DateTime.TryParse(ngayBatDau, out ngayBatDauDt))
+            {
+                //lbWarningNgayBD1.Visible = true;
+                txtNgayBatDau.Clear();
+                txtNgayBatDau.Focus();
+                return;
+            }
+
+            // Xóa các label cảnh báo sau khi kiểm tra thành công
+            /*foreach (Control ct in panelNV.Controls)
+            {
+                if (ct is Label lb)
+                {
+                    if (lb.Name.Contains("lbWarning"))
+                    {
+                        lb.Visible = false;
+                    }
+                }
+            }*/
+
+            // Tạo đối tượng NhanVienDTO và thêm mới
+            NhanVienDTO nhanVienMoi = new NhanVienDTO(
+                hoTen,
+                ngaySinhDt,
+                diaChi,
+                soDienThoai,
+                chucVu,
+                ngayBatDauDt,
+                luongCoBan
+            );
+
+            // Gọi phương thức thêm nhân viên từ lớp BLL
+            bool themNhanVien = _nhanVienBLL.ThemNhanVien(nhanVienMoi);
+            if (themNhanVien)
+            {
+                MessageBox.Show("Thêm nhân viên thành công");
+            }
+            else
+            {
+                MessageBox.Show("Thêm nhân viên thất bại");
+            }
+
+            // Xóa sạch các trường nhập liệu để chuẩn bị cho lần nhập tiếp theo
+            txtHoTen.Clear();
+            txtNgaySinh.Clear();
+            txtDiaChi.Clear();
+            txtSoDienThoai.Clear();
+            txtChucVu.Clear();
+            txtNgayBatDau.Clear();
+            txtLuongCoBan.Clear();
+
+            // Cập nhật lại danh sách nhân viên
+            HienThiDSNhanVien();
+
 
         }
 
@@ -396,6 +512,17 @@ namespace GUI
 
                 cmsNhanVien.Show(dgvBXH, cellRectangle.Left, cellRectangle.Bottom - 20);
             }
+        }
+        private void HienThiDSNhanVien()
+        {
+            listNhanVien = _nhanVienBLL.LayDSNhanVien();
+
+        }
+
+        private void fNhanVien_Load(object sender, EventArgs e)
+        {
+            SetupDataGridView();
+            HienThiDSNhanVien();
         }
     }
 }
