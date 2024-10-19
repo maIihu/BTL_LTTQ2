@@ -19,7 +19,7 @@ namespace DAL
         }
         public List<NhanVienDTO> LayDSNhanVien()
         {
-            string query = "SELECT TenNhanVien,NgayBatDau,LuongCoBan FROM NHANVIEN ";
+            string query = "SELECT * FROM NHANVIEN ";
 
             DataTable dataTable = DataProvider.Instance.ExecuteQuery(query);
             List<NhanVienDTO> listNhanVien = new List<NhanVienDTO>();
@@ -27,10 +27,15 @@ namespace DAL
             {
                 NhanVienDTO nhanVienDTO = new NhanVienDTO
                 (
+                    row["MaNhanvien"].ToString(),   
                     row["TenNhanVien"].ToString(),
-                    DateTime.Parse(row["NgayBatDau"].ToString()),
-                    decimal.TryParse(row["LuongCoBan"].ToString(), out decimal luongCoBanValue) ? luongCoBanValue : 0
-
+                    DateTime.Parse(row["NgaySinh"].ToString()),
+                    row["MaTrinhDo"].ToString(),
+                    row["GioiTinh"].ToString(),
+                    row["DiaChi"].ToString(),
+                    row["SoDienThoai"].ToString(),
+                    row["ChucVu"].ToString(),
+                    DateTime.Parse(row["NgayBatDau"].ToString())
                 );
                 listNhanVien.Add(nhanVienDTO);
             }
@@ -38,7 +43,7 @@ namespace DAL
         }
         public bool ThemNhanVien (NhanVienDTO nhanVien)
         {
-            string query = "INSERT INTO PHUTUNG (MaNhanVien, TenNhanVien, MaTrinhDo, NgaySinh, GioiTinh, DiaChi, SoDienThoai, ChucVu, NgayBatDau, LuongCoBan)" +
+            string query = "INSERT INTO NHANVIEN (MaNhanVien, TenNhanVien, MaTrinhDo, NgaySinh, GioiTinh, DiaChi, SoDienThoai, ChucVu, NgayBatDau, LuongCoBan)" +
                 " VALUES (@maNhanVien, @tenNhanVien, @maTrinhDo, @ngaySinh, @gioiTinh, @diaChi, @soDienThoai, @chucVu, @ngayBatDau, @luongCoBan)";
             int result = DataProvider.Instance.ExecuteNonQuery(query,
                 new object[] { nhanVien.MaNhanVien, nhanVien.TenNhanVien, nhanVien.MaTrinhDo, nhanVien.NgaySinh, nhanVien.GioiTinh,

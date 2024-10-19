@@ -8,16 +8,30 @@ namespace DTO
 {
     public class NhanVienDTO
     {
-        public NhanVienDTO(string tenNhanVien, DateTime ngaySinh, string diaChi, string soDienThoai, string chucVu, DateTime ngayBatDau, decimal luongCoBan) {
-            this.TenNhanVien = tenNhanVien;
-            
+        public NhanVienDTO(string tenNhanVien, DateTime ngaySinh, string diaChi, string soDienThoai, 
+            string chucVu, DateTime ngayBatDau) {
+            this.TenNhanVien = tenNhanVien;     
             this.NgaySinh = ngaySinh;
             this.DiaChi = diaChi;
             this.SoDienThoai = soDienThoai;
             this.ChucVu = chucVu;
             this.NgayBatDau = ngayBatDau;
-            this.LuongCoBan = luongCoBan;
         }
+
+        public NhanVienDTO(string maNhanVien, string tenNhanVien, DateTime ngaySinh, string maTrinhDo, 
+            string gioiTinh, string diaChi, string soDienThoai, string chucVu, DateTime ngayBatDau)
+        {
+            MaNhanVien = maNhanVien;
+            TenNhanVien = tenNhanVien;
+            NgaySinh = ngaySinh;
+            MaTrinhDo = maTrinhDo;
+            GioiTinh = gioiTinh;
+            DiaChi = diaChi;
+            SoDienThoai = soDienThoai;
+            ChucVu = chucVu;
+            NgayBatDau = ngayBatDau;
+        }
+
         public string MaNhanVien { get; set; }
         public string TenNhanVien { get; set; }
         public DateTime NgaySinh { get; set; }
@@ -27,6 +41,5 @@ namespace DTO
         public string SoDienThoai { get; set; }
         public string ChucVu { get; set; }
         public DateTime NgayBatDau { get; set; }
-        public decimal LuongCoBan { get; set; }
     }
 }
