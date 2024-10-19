@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DTO;
 
 namespace DAL
 {
@@ -68,5 +70,42 @@ namespace DAL
 
             return result != null ? result.ToString() : null;
         }
+
+        public List<NhanVienDTO> LayDSNhanVien()
+        {
+            string query = "SELECT * FROM NHANVIEN ";
+
+            DataTable dataTable = DataProvider.Instance.ExecuteQuery(query);
+            List<NhanVienDTO> listNhanVien = new List<NhanVienDTO>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                NhanVienDTO nhanVienDTO = new NhanVienDTO
+                (
+                    row["MaNhanvien"].ToString(),
+                    row["TenNhanVien"].ToString(),
+                    DateTime.Parse(row["NgaySinh"].ToString()),
+                    row["MaTrinhDo"].ToString(),
+                    row["GioiTinh"].ToString(),
+                    row["DiaChi"].ToString(),
+                    row["SoDienThoai"].ToString(),
+                    DateTime.Parse(row["NgayBatDau"].ToString())
+                );
+                listNhanVien.Add(nhanVienDTO);
+            }
+            return listNhanVien;
+        }
+
+        public bool ThemNhanVien(NhanVienDTO nhanVien)
+        {
+            string query = "INSERT INTO NHANVIEN (MaNhanVien, TenNhanVien, " +
+                "MaTrinhDo, NgaySinh, GioiTinh,  SoDienThoai,  NgayBatDau, DiaChi)" +
+                " VALUES ( @maNhanVien , @tenNhanVien , @maTrinhDo , @ngaySinh , " +
+                "@gioiTinh , @soDienThoai , @ngayBatDau , @diaChi )";
+            int result = DataProvider.Instance.ExecuteNonQuery(query,
+                new object[] { nhanVien.MaNhanVien, nhanVien.TenNhanVien, nhanVien.MaTrinhDo, nhanVien.NgaySinh, nhanVien.GioiTinh,
+                    nhanVien.SoDienThoai, nhanVien.NgayBatDau, nhanVien.DiaChi, });
+            return result > 0;
+        }
+
     }
 }

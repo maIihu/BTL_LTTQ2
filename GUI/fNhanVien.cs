@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BLL;
+using DTO;
 
 namespace GUI
 {
@@ -24,6 +26,9 @@ namespace GUI
         private Point posThongTinPanel = new Point(3, 265);
         private Point posThemNhanVienPanel = new Point(730, 0);
         private int CongViecOrCaNhan = 1;
+        private NhanVienBLL _nhanVienBLL = new NhanVienBLL();
+       
+        bool _isAdmin;
         public fNhanVien(string idLogin)
         {
             InitializeComponent();
@@ -40,15 +45,56 @@ namespace GUI
 
             ImportAvatar();
 
-            SetupDataGridView();
+
             this.idLogin = idLogin;
+
+            if (idLogin.Contains("MNV"))
+            {
+
+                _isAdmin = false;
+            }
+            if (idLogin.Contains("QL"))
+            {
+                lblChucVu.Text = "Quản lý";
+                _isAdmin = true;
+            }
 
             dtpNgayBatDau.ValueChanged += (s, ev) =>
             {
                 txtNgayBatDau.Text = dtpNgayBatDau.Value.ToString("dddd, dd/MM/yyyy");
             };
+            SetupDataGridView();
         }
 
+        private void fNhanVien_Load(object sender, EventArgs e)
+        {
+            if (dgvNhanVien.Rows.Count > 0)
+            {
+                dgvNhanVien.Rows[0].Selected = true;
+                dgvNhanVien_CellClick(dgvNhanVien, new DataGridViewCellEventArgs(0, 0));
+            }
+        }
+        private void HienThiDSNhaVien()
+        {
+            List<NhanVienDTO> listNhanVien = _nhanVienBLL.LayDSNhanVien();
+            ThemDuLieuPhuTung(listNhanVien);
+        }
+        private void ThemDuLieuPhuTung(List<NhanVienDTO> listNhanVien)
+        {
+            dgvNhanVien.Rows.Clear();
+
+            foreach (var x in listNhanVien)
+            {
+                string _chucVu = "";
+                if (x.MaNhanVien.Contains("MNV")){ 
+                   lblChucVu.Text = _chucVu = "Nhân viên"; 
+                }
+                if (x.MaNhanVien.Contains("QL")) { 
+                    lblChucVu.Text = _chucVu = "Quản lý"; 
+                }
+                dgvNhanVien.Rows.Add(x.MaNhanVien, x.GioiTinh, _chucVu, x.NgayBatDau.ToString("dd/MM/yyyy"));
+            }
+        }
         private void ImportAvatar()
         {
             avatars[0] = Properties.Resources.Avatar;
@@ -58,11 +104,6 @@ namespace GUI
             avatars[4] = Properties.Resources.Avatar_4_;
         }
 
-        public int RandId(int min, int max)
-        {
-            Random random = new Random();
-            return random.Next(min, max);
-        }
 
         private void SetupDataGridView()
         {
@@ -81,35 +122,16 @@ namespace GUI
 
             dgvNhanVien.Columns["TenNV"].FillWeight = 40;
             dgvNhanVien.Columns["NgayBatDau"].FillWeight = 40;
-            dgvNhanVien.Columns["Luong"].FillWeight = 20;
+            dgvNhanVien.Columns["ChucVu"].FillWeight = 30;
+            dgvNhanVien.Columns["GioiTinh"].FillWeight = 20;
 
-            /*dgvNhanVien.Columns["Luong"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-*/
+
             dgvNhanVien.RowTemplate.Height = 60;
             dgvNhanVien.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dgvNhanVien.ColumnHeadersHeight = 60;
 
-            dgvNhanVien.Rows.Add("Arlene McCoy\nWorker", "Mar 1, 2022\nJoined from 235 days", "$1,546\n1 Jun 2022");
-            dgvNhanVien.Rows.Add("John Doe\nManager", "Feb 15, 2021\nJoined from 600 days", "$2,345\n5 Mar 2022");
-            dgvNhanVien.Rows.Add("Jane Smith\nEngineer", "Jul 10, 2020\nJoined from 800 days", "$3,250\n12 Dec 2021");
-            dgvNhanVien.Rows.Add("Michael Johnson\nTechnician", "Apr 23, 2021\nJoined from 500 days", "$1,850\n10 May 2022");
-            dgvNhanVien.Rows.Add("Emily Davis\nDesigner", "Oct 5, 2022\nJoined from 180 days", "$1,750\n15 Nov 2022");
-            dgvNhanVien.Rows.Add("Sarah Lee\nMarketing", "Jan 10, 2023\nJoined from 90 days", "$1,400\n1 Apr 2023");
-            dgvNhanVien.Rows.Add("David Brown\nHR", "Dec 15, 2021\nJoined from 400 days", "$2,100\n20 Jan 2022");
-            dgvNhanVien.Rows.Add("Laura Wilson\nSales", "Jun 17, 2020\nJoined from 950 days", "$2,800\n7 Feb 2021");
-            dgvNhanVien.Rows.Add("Chris White\nSupport", "Sep 3, 2022\nJoined from 200 days", "$1,500\n22 Sep 2022");
-            dgvNhanVien.Rows.Add("Megan Thompson\nAnalyst", "May 25, 2021\nJoined from 480 days", "$2,050\n1 Jul 2021");
-            dgvNhanVien.Rows.Add("Paul Walker\nSupervisor", "Nov 15, 2020\nJoined from 750 days", "$3,500\n25 Jan 2021");
-            dgvNhanVien.Rows.Add("Sophia Martinez\nAccountant", "Dec 1, 2019\nJoined from 1000 days", "$2,900\n10 Dec 2019");
-            dgvNhanVien.Rows.Add("Alexander Kim\nConsultant", "Mar 18, 2022\nJoined from 230 days", "$3,200\n15 Mar 2022");
-            dgvNhanVien.Rows.Add("Olivia Hernandez\nDeveloper", "Jul 27, 2021\nJoined from 400 days", "$2,600\n22 Sep 2021");
-            dgvNhanVien.Rows.Add("Benjamin Carter\nArchitect", "Jan 5, 2020\nJoined from 900 days", "$4,100\n10 Feb 2020");
-            dgvNhanVien.Rows.Add("Victoria Evans\nNurse", "May 22, 2022\nJoined from 160 days", "$1,950\n1 Jun 2022");
-            dgvNhanVien.Rows.Add("James Russell\nScientist", "Aug 14, 2019\nJoined from 1100 days", "$5,200\n15 Sep 2019");
-            dgvNhanVien.Rows.Add("Ella Murphy\nReceptionist", "Oct 3, 2021\nJoined from 365 days", "$1,300\n20 Oct 2021");
-            dgvNhanVien.Rows.Add("Henry Rodriguez\nTeacher", "Feb 25, 2021\nJoined from 600 days", "$2,450\n5 Mar 2021");
-            dgvNhanVien.Rows.Add("Ava Bennett\nLawyer", "Apr 18, 2020\nJoined from 820 days", "$3,750\n22 Apr 2020");
 
+            HienThiDSNhaVien();
 
             dgvBXH.CellBorderStyle = DataGridViewCellBorderStyle.SunkenHorizontal;
             dgvBXH.GridColor = SystemColors.Window;
@@ -189,54 +211,24 @@ namespace GUI
                 e.Handled = true;
                 e.PaintBackground(e.ClipBounds, true);
 
-                if (e.ColumnIndex == dgvNhanVien.Columns["TenNV"].Index &&
-                    dgvNhanVien.Rows[e.RowIndex].Cells["TenNV"].Value != null)
+                string cellValue = e.Value?.ToString() ?? string.Empty;
+                if (cellValue != string.Empty)
                 {
                     Rectangle rect = e.CellBounds;
-
-                    Image img = avatars[RandId(0, 5)];
-                    Rectangle imgRect = new Rectangle(rect.X + 5, rect.Y + 5, 40, 40);
-                    e.Graphics.DrawImage(img, imgRect);
-
-                    string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["TenNV"].Value).Split('\n');
-                    string p1 = parts[0];
-                    string p2 = parts[1];
-
-
-                    e.Graphics.DrawString(p1, font, Brushes.Black, rect.X + 50, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X + 50, rect.Y + 25);
-                }
-                else if (e.ColumnIndex == dgvNhanVien.Columns["NgayBatDau"].Index &&
-                    dgvNhanVien.Rows[e.RowIndex].Cells["NgayBatDau"].Value != null)
-                {
-                    Rectangle rect = e.CellBounds;
-
-                    string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["NgayBatDau"].Value).Split('\n');
-                    string p1 = parts[0];
-                    string p2 = parts[1];
-
-                    e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
-                }
-                else if (e.ColumnIndex == dgvNhanVien.Columns["Luong"].Index &&
-                    dgvNhanVien.Rows[e.RowIndex].Cells["Luong"].Value != null)
-                {
-                    Rectangle rect = e.CellBounds;
-
-                    string[] parts = ((string)dgvNhanVien.Rows[e.RowIndex].Cells["Luong"].Value).Split('\n');
-                    string p1 = parts[0];
-                    string p2 = parts[1];
-
-                    e.Graphics.DrawString(p1, font, Brushes.Black, rect.X, rect.Y + 5);
-                    e.Graphics.DrawString(p2, fontSub, Brushes.Gray, rect.X, rect.Y + 25);
+                    e.Graphics.DrawString(cellValue, font, Brushes.Black, rect.X, rect.Y + 15);
                 }
             }
         }
-
+        // 1 là cá nhân , 2 là công việc
         private void lblThongTin_Click(object sender, EventArgs e)
         {
             if(CongViecOrCaNhan == 1)
             {
+                if (!_isAdmin && nhanVienChon != idLogin)
+                {
+                    MessageBox.Show("Bạn không xem được thông tin người khác!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
                 lblThongTin.Text = "Thông tin công việc";
 
                 panelThongTinCaNhan.Visible = true;
@@ -246,6 +238,7 @@ namespace GUI
             }
             else
             {
+                
                 lblThongTin.Text = "Thông tin cá nhân";
 
                 panelThongTinCongViec.Visible = true;
@@ -280,11 +273,9 @@ namespace GUI
             rbtnNam.Checked = false;
             rbtnNu.Checked = false;
             txtDiaChi.Text = string.Empty;
-            txtChucVu.Text = string.Empty;
             txtNgayBatDau.Text = string.Empty;
             txtSoDienThoai.Text = string.Empty;
-            txtLuongCoBan.Text = string.Empty;
-
+            txtMa.Text = string.Empty;
             panelThemNhanVien.Visible = true;
             panelThongTin.Visible = false;
         }
@@ -297,8 +288,51 @@ namespace GUI
 
         private void btnThem_Click(object sender, EventArgs e)
         {
+            string hoTen = txtHoTen.Text;
+            DateTime ngaySinh = DateTime.Parse(txtNgaySinh.Text);
+            string diaChi = txtDiaChi.Text;
+            string sdt = txtSoDienThoai.Text;
+            DateTime ngayBatDau = DateTime.Parse(txtNgayBatDau.Text); 
+            string trinhDo = combTrinhDo.Text;
+            string ma = txtMa.Text;
+            string soDienThoai = txtSoDienThoai.Text;
+            string gioiTinh = rbtnNam.Checked ? "Nam" : "Nữ";
+            if (string.IsNullOrWhiteSpace(hoTen))
+            {
+                MessageBox.Show("Vui lòng nhập họ tên", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(diaChi))
+            {
+                MessageBox.Show("Vui lòng nhập địa chỉ", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(sdt))
+            {
+                MessageBox.Show("Vui lòng nhập số điện thoại", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            if (string.IsNullOrWhiteSpace(trinhDo))
+            {
+                MessageBox.Show("Vui lòng chọn trình độ", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!rbtnNam.Checked && !rbtnNu.Checked)
+            {
+                MessageBox.Show("Vui lòng chọn giới tính", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            bool themNv = _nhanVienBLL.ThemNhanVien(new NhanVienDTO(ma, hoTen, ngaySinh, trinhDo, gioiTinh, diaChi, soDienThoai, ngayBatDau));
+            if (themNv)
+            {
+                MessageBox.Show("Thêm nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                lblThemNhanVien_Click(sender, e);
+            }
         }
+
 
         private void picAddImage_Click(object sender, EventArgs e)
         {
@@ -347,20 +381,12 @@ namespace GUI
             DrawRoundedPanel(panel6, 15, BorderColor, BorderThickness, e);
         }
 
-        private void panel7_Paint(object sender, PaintEventArgs e)
-        {
-            DrawRoundedPanel(panel7, 15, BorderColor, BorderThickness, e);
-        }
 
         private void panel8_Paint(object sender, PaintEventArgs e)
         {
             DrawRoundedPanel(panel8, 15, BorderColor, BorderThickness, e);
         }
 
-        private void panel9_Paint(object sender, PaintEventArgs e)
-        {
-            DrawRoundedPanel(panel9, 15, BorderColor, BorderThickness, e);
-        }
 
         private void panel10_Paint(object sender, PaintEventArgs e)
         {
@@ -397,5 +423,49 @@ namespace GUI
                 cmsNhanVien.Show(dgvBXH, cellRectangle.Left, cellRectangle.Bottom - 20);
             }
         }
+        string nhanVienChon;
+        
+        // hàm chọn thông tin theo hàng
+        private void dgvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                foreach (DataGridViewRow row in dgvNhanVien.Rows)
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                    row.DefaultCellStyle.SelectionBackColor = Color.White;
+                }
+
+                dgvNhanVien.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
+                dgvNhanVien.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.LightBlue;
+
+                string maChon = dgvNhanVien.Rows[e.RowIndex].Cells["TenNV"].Value.ToString();
+                nhanVienChon = maChon;
+
+                lblTenNhanVien.Text = _nhanVienBLL.TimNhanVienTheoMa(maChon);
+                 
+                lblNgaySinh.Text = _nhanVienBLL.TimNgaySinh(maChon);
+                lblDiaChi.Text = _nhanVienBLL.TimDiaChi(maChon);
+                if (maChon.Contains("MNV"))
+                {
+                    lblVaiTro.Text = lblChucVu.Text  = "Nhân viên";
+                }
+                if (maChon.Contains("QL"))
+                {
+                    lblVaiTro.Text = lblChucVu.Text = "Quản lý";
+                }
+                lblSoDienThoai.Text = _nhanVienBLL.TimSoDienThoai(maChon);
+                lblNgayBatDau.Text = _nhanVienBLL.TimNgayBatDau(maChon);
+
+                lblLuong.Text = (int.Parse(_nhanVienBLL.TimTrinhDoTheoMa(maChon).Substring(2)) * 10000000).ToString("N0") + " VND";
+
+                Random rand = new Random();
+                lblCap1.Text = (rand.NextDouble() * 100).ToString("F2") + "%";
+                lblCap2.Text = (rand.NextDouble() * 100).ToString("F2") + "%";
+                lblCap3.Text = (rand.NextDouble() * 100).ToString("F2") + "%";
+            }
+        }
+
+
     }
 }

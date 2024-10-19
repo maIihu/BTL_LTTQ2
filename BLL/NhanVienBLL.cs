@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DAL;
+using DTO;
 
 namespace BLL
 {
@@ -41,6 +42,12 @@ namespace BLL
         {
             return _nhanVienDAL.TimDiaChi(maNV);
         }
-        
+        public List<NhanVienDTO> LayDSNhanVien()
+        {
+            return _nhanVienDAL.LayDSNhanVien();    
+        }
+        public bool ThemNhanVien(NhanVienDTO nhanVienDTO) {
+            return _nhanVienDAL.ThemNhanVien(nhanVienDTO);
+        }
     }
 }
